@@ -5,18 +5,18 @@ import axios from "axios";
 import { logout, loginSuccess } from "../redux/authSlice"; // ✅ Import loginSuccess for updating Redux state
 
 const Dashboard = () => {
-  const { user, token } = useSelector((state) => state.auth); // ✅ Get user & token from Redux
+  const { user, token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [blogs, setBlogs] = useState([]); // ✅ Store user's blogs
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!token) {
-        console.error("No token found! Redirecting to login...");
-        navigate("/login"); // ✅ Redirect if no token
+        navigate("/login");
         return;
       }
 
@@ -28,23 +28,42 @@ const Dashboard = () => {
           }
         );
 
-        dispatch(loginSuccess({ user: data, token })); // ✅ Save user to Redux (if needed)
+        dispatch(loginSuccess({ user: data, token }));
       } catch (err) {
-        console.error("Error fetching user profile:", err);
         setError("Session expired! Please login again.");
-        dispatch(logout()); // ✅ Logout on failed token
+        dispatch(logout());
         navigate("/login");
       } finally {
         setLoading(false);
       }
     };
 
-    if (!user) fetchUserProfile(); // ✅ Fetch user only if not in Redux
+    if (!user) fetchUserProfile();
     else setLoading(false);
   }, [user, token, navigate, dispatch]);
 
+  // ✅ Fetch User's Own Blogs
+  useEffect(() => {
+    const fetchUserBlogs = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:5000/api/blogs/my-blogs",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setBlogs(data);
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+        setError("Could not load blogs.");
+      }
+    };
+
+    if (user) fetchUserBlogs(); // ✅ Fetch blogs only if user is available
+  }, [user, token]);
+
   const handleLogout = () => {
-    dispatch(logout()); // ✅ Clear Redux state & token
+    dispatch(logout());
     navigate("/login");
   };
 
@@ -120,30 +139,42 @@ const Dashboard = () => {
         {/* Error Message */}
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
-        {/* Recent Blog Posts */}
+        {/* User's Blogs */}
         <div className="mt-8">
-          <h2 className="text-2xl font-bold">📢 Recent Blogs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-            {[1, 2, 3].map((id) => (
-              <div
-                key={id}
-                className="bg-white bg-opacity-25 backdrop-blur-lg shadow-lg p-6 rounded-lg"
-              >
-                <h3 className="text-xl font-bold text-black">
-                  📖 Blog Title {id}
-                </h3>
-                <p className="text-gray-800 opacity-80 mt-2">
-                  Short description of the blog post...
-                </p>
-                <Link
-                  to={`/blog/${id}`}
-                  className="text-blue-900 hover:underline mt-2 inline-block font-bold"
+          <h2 className="text-2xl font-bold">📝 Your Blogs</h2>
+
+          {blogs.length === 0 ? (
+            <p className="text-white opacity-80 mt-4">
+              You have not created any blogs yet.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+              {blogs.map((blog) => (
+                <div
+                  key={blog._id}
+                  className="bg-white bg-opacity-25 backdrop-blur-lg shadow-lg p-6 rounded-lg"
                 >
-                  Read More →
-                </Link>
-              </div>
-            ))}
-          </div>
+                  {blog.image && (
+                    <img
+                      src={blog.image}
+                      alt="Blog Cover"
+                      className="w-full h-40 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <h3 className="text-xl font-bold text-black">{blog.title}</h3>
+                  <p className="text-gray-800 opacity-80 mt-2">
+                    {blog.content.substring(0, 100)}...
+                  </p>
+                  <Link
+                    to={`/blog/${blog._id}`}
+                    className="text-blue-900 hover:underline mt-2 inline-block font-bold"
+                  >
+                    Read More →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>
