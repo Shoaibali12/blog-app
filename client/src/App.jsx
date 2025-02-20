@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 
 function App() {
   const { token } = useSelector((state) => state.auth); // ✅ Get auth token from Redux
@@ -35,7 +36,10 @@ function App() {
           path="/dashboard"
           element={token ? <Dashboard /> : <Navigate to="/login" replace />}
         />
-
+        <Route
+          path="/profile"
+          element={token ? <Profile /> : <Navigate to="/login" replace />}
+        />
         {/* Catch All Unknown Routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
