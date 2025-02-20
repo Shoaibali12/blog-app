@@ -1,17 +1,35 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
   const [user, setUser] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Data:", user);
-    // API request can be added here
+    setLoading(true);
+    setError("");
+
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/api/users/register",
+        user
+      );
+      console.log("User Registered:", data);
+      alert("Signup Successful! Redirecting to login...");
+      navigate("/login"); // Redirect to login page
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,45 +42,44 @@ const Signup = () => {
           Join our blog community today!
         </p>
 
+        {error && <p className="text-red-400 text-center mb-3">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={user.name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
-              required
-            />
-          </div>
-          <div className="relative">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={user.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
-              required
-            />
-          </div>
-          <div className="relative">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={user.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={user.name}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={user.email}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={user.password}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            required
+          />
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md hover:opacity-90 transition duration-300 transform hover:scale-105"
+            className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            }`}
+            disabled={loading}
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
