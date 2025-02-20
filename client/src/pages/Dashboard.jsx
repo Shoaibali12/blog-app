@@ -60,10 +60,8 @@ const Dashboard = () => {
     <div className="min-h-screen flex">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white shadow-lg p-6 border-r border-gray-800 hidden md:block">
-        <h2 className="text-2xl font-bold text-white mb-6">
-          📌 Blog Dashboard
-        </h2>
-        <p className="text-gray-400">Welcome, {user?.name || "User"} 👋</p>
+        <h2 className="text-2xl font-bold text-white mb-6">Blog Dashboard</h2>
+        <p className="text-gray-400"> {user?.name || "User"} </p>
         <nav className="mt-6">
           <ul className="space-y-4">
             <li>
