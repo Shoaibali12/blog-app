@@ -3,11 +3,6 @@ import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
 
-/**
- * @desc    Register a new user
- * @route   POST /api/users/register
- * @access  Public
- */
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -40,11 +35,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-/**
- * @desc    Login user & get token
- * @route   POST /api/users/login
- * @access  Public
- */
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -63,4 +53,13 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, authUser };
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = req.user;
+  res.json({
+    _id: user.id,
+    name: user.name,
+    email: user.email,
+  });
+});
+
+export { registerUser, authUser, getUserProfile };
