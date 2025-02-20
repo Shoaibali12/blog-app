@@ -11,9 +11,11 @@ import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import CreateBlog from "./pages/CreateBlog";
+import ManageBlogs from "./pages/ManageBlogs";
+import EditBlog from "./pages/EditBlog";
 
 function App() {
-  const { token } = useSelector((state) => state.auth); // ✅ Get auth token from Redux
+  const { token } = useSelector((state) => state.auth);
 
   return (
     <Router>
@@ -25,7 +27,7 @@ function App() {
             <Route path="/login" element={<Signin />} />
           </>
         ) : (
-          <Route path="*" element={<Navigate to="/" replace />} /> // ✅ Redirect logged-in users away from signup/login
+          <Route path="*" element={<Navigate to="/" replace />} />
         )}
 
         {/* Private Routes - Only accessible when logged in */}
@@ -45,6 +47,15 @@ function App() {
           path="/create-blog"
           element={token ? <CreateBlog /> : <Navigate to="/login" replace />}
         />
+        <Route
+          path="/manage-blogs/:id"
+          element={token ? <ManageBlogs /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/edit-blog/:id"
+          element={token ? <EditBlog /> : <Navigate to="/login" replace />}
+        />
+
         {/* Catch All Unknown Routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

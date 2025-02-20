@@ -101,6 +101,14 @@ const Dashboard = () => {
             </li>
             <li>
               <Link
+                to={`/manage-blogs/${user?._id}`} // ✅ Pass user ID dynamically
+                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
+              >
+                📂 Manage Blogs
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/profile"
                 className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
               >
