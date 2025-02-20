@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { logout, loginSuccess } from "../redux/authSlice"; // ✅ Import loginSuccess for updating Redux state
+import { logout, loginSuccess } from "../redux/authSlice";
+import BlogCard from "../components/BlogCard";
 
 const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -156,30 +157,9 @@ const Dashboard = () => {
               You have not created any blogs yet.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            <div className="flex flex-wrap justify-center gap-8 mt-4">
               {blogs.map((blog) => (
-                <div
-                  key={blog._id}
-                  className="bg-white bg-opacity-25 backdrop-blur-lg shadow-lg p-6 rounded-lg"
-                >
-                  {blog.image && (
-                    <img
-                      src={blog.image}
-                      alt="Blog Cover"
-                      className="w-full h-40 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  <h3 className="text-xl font-bold text-black">{blog.title}</h3>
-                  <p className="text-gray-800 opacity-80 mt-2">
-                    {blog.content.substring(0, 100)}...
-                  </p>
-                  <Link
-                    to={`/blog/${blog._id}`}
-                    className="text-blue-900 hover:underline mt-2 inline-block font-bold"
-                  >
-                    Read More →
-                  </Link>
-                </div>
+                <BlogCard key={blog._id} blog={blog} />
               ))}
             </div>
           )}
