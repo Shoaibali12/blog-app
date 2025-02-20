@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Signup from "./pages/Signup";
+import Signin from "./pages/Signin";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Navigate to="/signup" />} />{" "}
         {/* Redirect "/" to Signup */}
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Signin />} />
       </Routes>
     </Router>
   );
