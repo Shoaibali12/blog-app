@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+import { loginSuccess } from "../redux/authSlice";
 
-const Signin = () => {
+const Login = () => {
   const [user, setUser] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,9 +25,8 @@ const Signin = () => {
         "http://localhost:5000/api/users/login",
         user
       );
-      console.log("User Logged In:", data);
-      alert("Login Successful! Redirecting to dashboard...");
-      navigate("/dashboard"); // Redirect after login
+      dispatch(loginSuccess(data)); // ✅ Save user in Redux
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid Credentials!");
     } finally {
@@ -88,4 +90,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Login;
