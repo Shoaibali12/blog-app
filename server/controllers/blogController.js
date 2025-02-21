@@ -33,8 +33,11 @@ const createBlog = asyncHandler(async (req, res) => {
 const getAllBlogs = asyncHandler(async (req, res) => {
   try {
     const blogs = await Blog.find()
-      .populate("user", "name email")
+      .populate("user", "name email") // ✅ Populate blog owner
+      .populate("likes", "name email") // ✅ Populate users who liked the blog
+      .populate("comments.user", "name email") // ✅ Populate users who commented
       .sort({ createdAt: -1 });
+
     res.json(blogs);
   } catch (error) {
     console.error("❌ Error fetching blogs:", error);
@@ -136,27 +139,36 @@ const deleteBlog = asyncHandler(async (req, res) => {
 
 // ✅ Like a Blog
 const likeBlog = asyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
+  const blog = await Blog.findById(req.params.id).populate(
+    "likes",
+    "name email"
+  );
+
   if (!blog) {
     res.status(404);
     throw new Error("Blog not found");
   }
 
-  if (blog.likes.includes(req.user._id)) {
+  if (
+    blog.likes.some((like) => like._id.toString() === req.user._id.toString())
+  ) {
     blog.likes = blog.likes.filter(
-      (id) => id.toString() !== req.user._id.toString()
+      (like) => like._id.toString() !== req.user._id.toString()
     ); // Unlike
   } else {
     blog.likes.push(req.user._id); // Like
   }
 
   await blog.save();
+  await blog.populate("likes", "name email"); // ✅ Populate again after saving
+
   res.json({ likes: blog.likes });
 });
 
 // ✅ Comment on a Blog
 const commentOnBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
+
   if (!blog) {
     res.status(404);
     throw new Error("Blog not found");
@@ -166,6 +178,8 @@ const commentOnBlog = asyncHandler(async (req, res) => {
   blog.comments.push(newComment);
 
   await blog.save();
+  await blog.populate("comments.user", "name email"); // ✅ Populate user details for comments
+
   res.json({ comments: blog.comments });
 });
 
