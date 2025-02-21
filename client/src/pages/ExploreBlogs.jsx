@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-
+import Modal from "../components/Model";
 const ExploreBlogs = () => {
-  const { token, user } = useSelector((state) => state.auth);
-  const [blogs, setBlogs] = useState([]); // ✅ Ensure it's always an array
+  const { token, user } = useSelector((state) => state.auth); // ✅ Get user from Redux
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedLikes, setSelectedLikes] = useState([]);
+  const [selectedComments, setSelectedComments] = useState([]);
+  const [likesModalOpen, setLikesModalOpen] = useState(false);
+  const [commentsModalOpen, setCommentsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -14,7 +18,8 @@ const ExploreBlogs = () => {
         const { data } = await axios.get("http://localhost:5000/api/blogs", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setBlogs(data || []); // ✅ Ensure data is an array
+
+        setBlogs(data || []);
       } catch (err) {
         console.error("Error fetching blogs:", err);
         setError("Could not load blogs.");
@@ -26,18 +31,14 @@ const ExploreBlogs = () => {
     fetchBlogs();
   }, [token]);
 
-  // ✅ Handle Like Toggle
   const handleLike = async (blogId) => {
     try {
       const { data } = await axios.put(
         `http://localhost:5000/api/blogs/like/${blogId}`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // ✅ Update UI with new like status
       setBlogs(
         blogs.map((blog) =>
           blog._id === blogId ? { ...blog, likes: data.likes || [] } : blog
@@ -48,7 +49,6 @@ const ExploreBlogs = () => {
     }
   };
 
-  // ✅ Handle Comment Submission
   const handleComment = async (blogId, comment) => {
     try {
       const { data } = await axios.post(
@@ -57,7 +57,6 @@ const ExploreBlogs = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // ✅ Update UI with new comment
       setBlogs(
         blogs.map((blog) =>
           blog._id === blogId
@@ -68,6 +67,16 @@ const ExploreBlogs = () => {
     } catch (err) {
       console.error("Error commenting on blog:", err);
     }
+  };
+
+  const openLikesModal = (likes) => {
+    setSelectedLikes(likes);
+    setLikesModalOpen(true);
+  };
+
+  const openCommentsModal = (comments) => {
+    setSelectedComments(comments);
+    setCommentsModalOpen(true);
   };
 
   if (loading) {
@@ -83,14 +92,12 @@ const ExploreBlogs = () => {
       <h1 className="text-3xl font-bold text-center">🌍 Explore Blogs</h1>
       <p className="opacity-80 text-center">See what others are posting!</p>
 
-      {/* Error Message */}
       {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
-      {/* Blog Feed */}
       <div className="flex flex-col items-center gap-8 mt-6">
         {blogs.length > 0 ? (
           blogs.map((blog) => {
-            const isLiked = blog.likes?.includes(user?._id); // ✅ Check if the current user has liked the blog
+            const isLiked = blog.likes?.some((like) => like._id === user?._id);
 
             return (
               <div
@@ -111,53 +118,92 @@ const ExploreBlogs = () => {
 
                 {/* Like & Comment Section */}
                 <div className="flex items-center justify-between mt-4">
-                  <button
-                    onClick={() => handleLike(blog._id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                      isLiked
-                        ? "bg-red-500 text-white shadow-lg"
-                        : "bg-white text-black"
-                    }`}
-                  >
-                    <span className="text-xl">❤️</span>
-                    {blog.likes?.length || 0}
-                  </button>
-                  <span className="text-gray-700">
-                    {blog.comments?.length || 0} Comments
-                  </span>
-                </div>
+                  {/* Like Section (Left) */}
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => handleLike(blog._id)}
+                      className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
+                        isLiked ? "bg-red-500 shadow-lg" : "bg-gray-200"
+                      }`}
+                    >
+                      <span className="text-2xl">{isLiked ? "❤️" : "🤍"}</span>
+                    </button>
 
-                {/* Comment Section */}
-                <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-50 text-black placeholder-black focus:ring-2 focus:ring-white outline-none"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter")
-                        handleComment(blog._id, e.target.value);
-                    }}
-                  />
-                </div>
+                    {/* Show Likes Count (Clickable to open modal) */}
+                    <span
+                      className="text-gray-700 cursor-pointer hover:underline mt-2"
+                      onClick={() => openLikesModal(blog.likes)}
+                    >
+                      {blog.likes?.length} Likes
+                    </span>
+                  </div>
 
-                {/* Show Comments */}
-                <div className="mt-4">
-                  {blog.comments?.slice(0, 3).map((comment, index) => (
-                    <p key={index} className="text-sm text-gray-700">
-                      <strong>{comment.user?.name || "Anonymous"}</strong>:{" "}
-                      {comment.text}
-                    </p>
-                  ))}
+                  {/* Comment Section (Right) */}
+                  <div className="flex flex-col items-end">
+                    <span
+                      className="text-gray-700 cursor-pointer hover:underline"
+                      onClick={() => openCommentsModal(blog.comments)}
+                    >
+                      {blog.comments?.length} Comments
+                    </span>
+                  </div>
                 </div>
               </div>
             );
           })
         ) : (
-          <p className="text-center text-white text-lg">
-            No blogs available. Be the first to post!
-          </p>
+          <p className="text-center text-white text-lg">No blogs available.</p>
         )}
       </div>
+
+      {/* ✅ Likes Modal */}
+      <Modal
+        isOpen={likesModalOpen}
+        onClose={() => setLikesModalOpen(false)}
+        title="People who liked this"
+      >
+        {selectedLikes.length > 0 ? (
+          selectedLikes.map((like) => (
+            <div key={like._id} className="flex items-center gap-2 py-2">
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${like.name}`}
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full"
+              />
+              <span className="font-bold text-gray-800">{like.name}</span>
+            </div>
+          ))
+        ) : (
+          <p>No likes yet</p>
+        )}
+      </Modal>
+
+      {/* ✅ Comments Modal (FIXED) */}
+      <Modal
+        isOpen={commentsModalOpen}
+        onClose={() => setCommentsModalOpen(false)}
+        title="Comments"
+      >
+        {selectedComments.length > 0 ? (
+          selectedComments.map((comment, index) => (
+            <div key={index} className="flex items-start gap-3 py-2">
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user?.name}`}
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full"
+              />
+              <div>
+                <span className="font-bold text-gray-800">
+                  {comment.user?.name || "Unknown"}
+                </span>
+                <p className="text-gray-600">{comment.text}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No comments yet</p>
+        )}
+      </Modal>
     </div>
   );
 };
