@@ -113,4 +113,29 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, authUser, getUserProfile, updateUserProfile };
+// ✅ Upload Profile Picture
+const updateProfilePicture = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  user.profilePicture = req.file?.path || user.profilePicture; // Keep existing or default
+
+  await user.save();
+
+  res.json({
+    message: "Profile picture updated successfully!",
+    profilePicture: user.profilePicture,
+  });
+});
+
+export {
+  registerUser,
+  authUser,
+  getUserProfile,
+  updateUserProfile,
+  updateProfilePicture,
+};

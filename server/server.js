@@ -5,12 +5,18 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 const connectDB = async () => {
   try {
