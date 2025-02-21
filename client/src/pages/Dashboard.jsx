@@ -94,6 +94,14 @@ const Dashboard = () => {
             </li>
             <li>
               <Link
+                to="/explore"
+                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
+              >
+                🌍 Explore
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/create-blog"
                 className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
               >

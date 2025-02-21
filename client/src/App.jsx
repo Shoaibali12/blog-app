@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import CreateBlog from "./pages/CreateBlog";
 import ManageBlogs from "./pages/ManageBlogs";
 import EditBlog from "./pages/EditBlog";
+import ExploreBlogs from "./pages/ExploreBlogs";
 
 function App() {
   const { token } = useSelector((state) => state.auth);
@@ -54,6 +55,10 @@ function App() {
         <Route
           path="/edit-blog/:id"
           element={token ? <EditBlog /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/explore"
+          element={token ? <ExploreBlogs /> : <Navigate to="/login" replace />}
         />
 
         {/* Catch All Unknown Routes */}
