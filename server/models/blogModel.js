@@ -19,6 +19,18 @@ const blogSchema = new mongoose.Schema(
       type: String, // URL or file path for blog image
       default: "",
     },
+    likes: {
+      type: [mongoose.Schema.Types.ObjectId], // ✅ Array of user IDs
+      ref: "User",
+      default: [], // ✅ Default to an empty array
+    },
+    comments: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true } // Automatically adds createdAt & updatedAt fields
 );
