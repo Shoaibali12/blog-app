@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { logout, loginSuccess } from "../redux/authSlice";
+import { loginSuccess, logout } from "../redux/authSlice";
 import BlogCard from "../components/BlogCard";
+import Sidebar from "../components/Sidebar"; // ✅ Import Sidebar
 
 const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -12,7 +13,7 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [blogs, setBlogs] = useState([]); // ✅ Store user's blogs
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -43,7 +44,6 @@ const Dashboard = () => {
     else setLoading(false);
   }, [user, token, navigate, dispatch]);
 
-  // ✅ Fetch User's Own Blogs
   useEffect(() => {
     const fetchUserBlogs = async () => {
       try {
@@ -60,13 +60,8 @@ const Dashboard = () => {
       }
     };
 
-    if (user) fetchUserBlogs(); // ✅ Fetch blogs only if user is available
+    if (user) fetchUserBlogs();
   }, [user, token]);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
 
   if (loading) {
     return (
@@ -78,72 +73,15 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white shadow-lg p-6 border-r border-gray-800 hidden md:block">
-        <h2 className="text-2xl font-bold text-white mb-6">Blog Dashboard</h2>
-        <p className="text-gray-400"> {user?.name || "User"} </p>
-        <nav className="mt-6">
-          <ul className="space-y-4">
-            <li>
-              <Link
-                to="/"
-                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
-              >
-                🏠 Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/explore"
-                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
-              >
-                🌍 Explore
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/create-blog"
-                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
-              >
-                📝 Create Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={`/manage-blogs/${user?._id}`} // ✅ Pass user ID dynamically
-                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
-              >
-                📂 Manage Blogs
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/profile"
-                className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition"
-              >
-                👤 Profile
-              </Link>
-            </li>
-            <li>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left flex items-center gap-3 text-lg hover:bg-red-600 px-4 py-2 rounded-lg transition"
-              >
-                🚪 Logout
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      {/* ✅ Use Sidebar component (Independent) */}
+      <Sidebar />
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white">
+      <main className="ml-64 flex-1 p-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white">
         <h1 className="text-3xl font-bold">
           Welcome, {user?.name || "User"} 🎉
         </h1>
         <p className="opacity-80">Manage your blogs and create new content!</p>
 
-        {/* Create Blog Button */}
         <div className="mt-6">
           <Link
             to="/create-blog"
@@ -153,10 +91,8 @@ const Dashboard = () => {
           </Link>
         </div>
 
-        {/* Error Message */}
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
-        {/* User's Blogs */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold">📝 Your Blogs</h2>
 
