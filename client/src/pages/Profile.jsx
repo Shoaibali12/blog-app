@@ -81,7 +81,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
       <div className="w-full max-w-md bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-8 rounded-2xl border border-white border-opacity-30">
         <h2 className="text-3xl font-extrabold text-white text-center">
           👤 Profile
@@ -145,8 +145,8 @@ const Profile = () => {
           {/* ✅ Update Profile Button */}
           <button
             type="submit"
-            className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            className={`w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
             disabled={loading}
           >

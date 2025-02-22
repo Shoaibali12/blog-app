@@ -50,21 +50,21 @@ const ManageBlogs = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
+      <div className="min-h-screen flex items-center justify-center text-white bg-gray-900">
         Loading Blogs...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* ✅ Sidebar Added */}
+    <div className="min-h-screen flex bg-gray-900 text-white">
+      {/* ✅ Sidebar */}
       <Sidebar user={user} handleLogout={() => navigate("/login")} />
 
       {/* Manage Blogs Content */}
-      <main className="ml-64 flex-1 p-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white">
+      <main className="ml-64 flex-1 p-6">
         <h1 className="text-3xl font-bold">📝 Manage Your Blogs</h1>
-        <p className="opacity-80">Edit or delete your blogs here</p>
+        <p className="text-gray-300">Edit or delete your blogs here</p>
 
         <div className="mt-6 flex justify-end">
           <Link
@@ -81,7 +81,7 @@ const ManageBlogs = () => {
         {/* User's Blogs */}
         <div className="mt-8">
           {blogs.length === 0 ? (
-            <p className="text-white opacity-80 mt-4 text-center">
+            <p className="text-gray-300 mt-4 text-center">
               You have not created any blogs yet.
             </p>
           ) : (
@@ -89,8 +89,7 @@ const ManageBlogs = () => {
               {blogs.map((blog) => (
                 <div
                   key={blog._id}
-                  className="bg-white bg-opacity-25 backdrop-blur-lg shadow-lg p-6 rounded-lg 
-                     flex flex-col justify-between h-[400px]" // ✅ Fixed Height
+                  className="bg-gray-700 shadow-lg p-6 rounded-lg flex flex-col justify-between h-[400px]"
                 >
                   {blog.image && (
                     <img
@@ -99,12 +98,11 @@ const ManageBlogs = () => {
                       className="w-full h-40 object-cover rounded-lg mb-4"
                     />
                   )}
-                  <h3 className="text-xl font-bold text-black">{blog.title}</h3>
-                  <p className="text-gray-800 opacity-80 mt-2 flex-grow">
+                  <h3 className="text-xl font-bold text-white">{blog.title}</h3>
+                  <p className="text-gray-300 opacity-80 mt-2 flex-grow">
                     {blog.content.substring(0, 100)}...
                   </p>
                   <div className="mt-auto flex justify-between items-center">
-                    {" "}
                     {/* ✅ Push Buttons to Bottom */}
                     <Link
                       to={`/edit-blog/${blog._id}`}

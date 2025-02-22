@@ -72,32 +72,38 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* ✅ Use Sidebar component (Independent) */}
+    <div className="min-h-screen flex bg-gray-900 text-white">
+      {/* ✅ Sidebar */}
       <Sidebar />
 
-      <main className="ml-64 flex-1 p-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white">
+      {/* ✅ Main Content */}
+      <main className="ml-64 flex-1 p-6">
         <h1 className="text-3xl font-bold">
           Welcome, {user?.name || "User"} 🎉
         </h1>
-        <p className="opacity-80">Manage your blogs and create new content!</p>
+        <p className="text-gray-300 opacity-80">
+          Manage your blogs and create new content!
+        </p>
 
+        {/* ✅ Create Blog Button (Better Contrast) */}
         <div className="mt-6">
           <Link
             to="/create-blog"
-            className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-200 transition"
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-600 transition"
           >
             ➕ Create New Blog
           </Link>
         </div>
 
+        {/* ✅ Error Message (Red Color for Visibility) */}
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
+        {/* ✅ Blog List Section */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold">📝 Your Blogs</h2>
 
           {blogs.length === 0 ? (
-            <p className="text-white opacity-80 mt-4">
+            <p className="text-gray-300 opacity-80 mt-4">
               You have not created any blogs yet.
             </p>
           ) : (

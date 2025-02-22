@@ -25,8 +25,16 @@ const Login = () => {
         "http://localhost:5000/api/users/login",
         user
       );
-      dispatch(loginSuccess(data)); // ✅ Save user in Redux
-      navigate("/dashboard");
+
+      // ✅ Save user in Redux
+      dispatch(loginSuccess(data));
+
+      // ✅ Redirect based on role
+      if (data.user.isAdmin) {
+        navigate("/admin/dashboard"); // Redirect admin users
+      } else {
+        navigate("/dashboard"); // Redirect normal users
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid Credentials!");
     } finally {
@@ -35,14 +43,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-6">
-      <div className="w-full max-w-md bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-8 rounded-2xl border border-white border-opacity-30">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+      <div className="w-full max-w-md bg-gray-800 shadow-lg p-8 rounded-2xl border border-gray-700">
         <h2 className="text-3xl font-extrabold text-white text-center">
           Welcome Back
         </h2>
-        <p className="text-white text-center mb-6 opacity-80">
-          Login to your account
-        </p>
+        <p className="text-gray-300 text-center mb-6">Login to your account</p>
 
         {error && <p className="text-red-400 text-center mb-3">{error}</p>}
 
@@ -53,7 +59,7 @@ const Login = () => {
             placeholder="Email Address"
             value={user.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition duration-200"
             required
           />
           <input
@@ -62,13 +68,13 @@ const Login = () => {
             placeholder="Password"
             value={user.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition duration-200"
             required
           />
           <button
             type="submit"
-            className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            className={`w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
             disabled={loading}
           >
@@ -76,11 +82,11 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-white text-center mt-4 opacity-80">
+        <p className="text-gray-300 text-center mt-4">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="font-bold underline hover:text-gray-200 transition duration-200"
+            className="font-bold text-blue-400 hover:text-blue-300 transition duration-200"
           >
             Sign Up
           </Link>

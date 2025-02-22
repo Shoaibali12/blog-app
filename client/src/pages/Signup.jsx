@@ -33,12 +33,12 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-6">
-      <div className="w-full max-w-md bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-8 rounded-2xl border border-white border-opacity-30">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+      <div className="w-full max-w-md bg-gray-800 shadow-lg p-8 rounded-2xl border border-gray-700">
         <h2 className="text-3xl font-extrabold text-white text-center">
           Create Your Account
         </h2>
-        <p className="text-white text-center mb-6 opacity-80">
+        <p className="text-gray-300 text-center mb-6">
           Join our blog community today!
         </p>
 
@@ -51,7 +51,7 @@ const Signup = () => {
             placeholder="Full Name"
             value={user.name}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition duration-200"
             required
           />
           <input
@@ -60,7 +60,7 @@ const Signup = () => {
             placeholder="Email Address"
             value={user.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition duration-200"
             required
           />
           <input
@@ -69,13 +69,13 @@ const Signup = () => {
             placeholder="Password"
             value={user.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition duration-200"
             required
           />
           <button
             type="submit"
-            className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            className={`w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
             disabled={loading}
           >
@@ -83,11 +83,11 @@ const Signup = () => {
           </button>
         </form>
 
-        <p className="text-white text-center mt-4 opacity-80">
+        <p className="text-gray-300 text-center mt-4">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-bold underline hover:text-gray-200 transition duration-200"
+            className="font-bold text-blue-400 hover:text-blue-300 transition duration-200"
           >
             Login
           </Link>

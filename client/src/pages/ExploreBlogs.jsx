@@ -88,21 +88,23 @@ const ExploreBlogs = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
+      <div className="min-h-screen flex items-center justify-center text-white bg-gray-900">
         Loading Blogs...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-gray-900 text-white">
       {/* ✅ Sidebar */}
       <Sidebar />
 
       {/* Explore Blogs Content */}
-      <main className="ml-64 flex-1 p-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white">
+      <main className="ml-64 flex-1 p-6">
         <h1 className="text-3xl font-bold text-center">🌍 Explore Blogs</h1>
-        <p className="opacity-80 text-center">See what others are posting!</p>
+        <p className="opacity-80 text-center text-gray-300">
+          See what others are posting!
+        </p>
 
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
@@ -116,7 +118,7 @@ const ExploreBlogs = () => {
               return (
                 <div
                   key={blog._id}
-                  className="w-full max-w-2xl bg-white bg-opacity-25 backdrop-blur-lg shadow-lg p-6 rounded-lg"
+                  className="w-full max-w-2xl bg-gray-800 shadow-lg p-6 rounded-lg"
                 >
                   {/* ✅ User Profile Section */}
                   <div className="flex items-center gap-4 mb-4">
@@ -126,13 +128,13 @@ const ExploreBlogs = () => {
                         "https://via.placeholder.com/50"
                       }
                       alt="User Avatar"
-                      className="w-12 h-12 rounded-full border border-gray-300"
+                      className="w-12 h-12 rounded-full border border-gray-600"
                     />
                     <div>
-                      <p className="text-lg font-bold text-black">
+                      <p className="text-lg font-bold text-white">
                         {blog.user?.name || "Unknown User"}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-400">
                         {new Date(blog.createdAt).toLocaleString()}
                       </p>
                     </div>
@@ -146,10 +148,10 @@ const ExploreBlogs = () => {
                       className="w-full h-60 object-cover rounded-lg mb-4"
                     />
                   )}
-                  <h3 className="text-2xl font-bold text-black">
+                  <h3 className="text-2xl font-bold text-white">
                     {blog.title}
                   </h3>
-                  <p className="text-gray-800 opacity-80 mt-2">
+                  <p className="text-gray-300 opacity-80 mt-2">
                     {blog.content.substring(0, 150)}...
                   </p>
 
@@ -159,7 +161,7 @@ const ExploreBlogs = () => {
                       <button
                         onClick={() => handleLike(blog._id)}
                         className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
-                          isLiked ? "bg-red-500 shadow-lg" : "bg-gray-200"
+                          isLiked ? "bg-white-500 shadow-lg" : "bg-gray-700"
                         }`}
                       >
                         <span className="text-2xl">
@@ -167,16 +169,15 @@ const ExploreBlogs = () => {
                         </span>
                       </button>
                       <span
-                        className="text-gray-700 cursor-pointer hover:underline mt-2"
+                        className="text-gray-400 cursor-pointer hover:underline mt-2"
                         onClick={() => openLikesModal(blog.likes)}
                       >
                         {blog.likes?.length} Likes
                       </span>
                     </div>
-
                     <div className="flex flex-col items-end">
                       <span
-                        className="text-gray-700 cursor-pointer hover:underline"
+                        className="text-gray-400 cursor-pointer hover:underline mt-2"
                         onClick={() => openCommentsModal(blog.comments)}
                       >
                         {blog.comments?.length} Comments
@@ -196,7 +197,7 @@ const ExploreBlogs = () => {
                           [blog._id]: e.target.value,
                         })
                       }
-                      className="flex-1 px-4 py-2 rounded-lg bg-white bg-opacity-50 text-black placeholder-black focus:ring-2 focus:ring-white outline-none"
+                      className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-white outline-none"
                     />
 
                     {/* ✅ Send Button */}
@@ -213,13 +214,12 @@ const ExploreBlogs = () => {
               );
             })
           ) : (
-            <p className="text-center text-white text-lg">
+            <p className="text-center text-gray-300 text-lg">
               No blogs available.
             </p>
           )}
         </div>
       </main>
-
       {/* ✅ Likes Modal */}
       <Modal
         isOpen={likesModalOpen}
@@ -228,9 +228,15 @@ const ExploreBlogs = () => {
       >
         {selectedLikes.length > 0 ? (
           selectedLikes.map((like) => (
-            <p key={like._id} className="text-gray-800">
-              {like.name}
-            </p>
+            <div key={like._id} className="flex items-center gap-3 py-2">
+              {/* ✅ Show profile picture in likes */}
+              <img
+                src={like.profilePicture || "https://via.placeholder.com/50"}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full border border-gray-300"
+              />
+              <span className="font-bold text-gray-800">{like.name}</span>
+            </div>
           ))
         ) : (
           <p>No likes yet</p>
@@ -245,9 +251,23 @@ const ExploreBlogs = () => {
       >
         {selectedComments.length > 0 ? (
           selectedComments.map((comment, index) => (
-            <p key={index} className="text-gray-800">
-              {comment.text}
-            </p>
+            <div key={index} className="flex items-start gap-3 py-2">
+              {/* ✅ Show profile picture in comments */}
+              <img
+                src={
+                  comment.user?.profilePicture ||
+                  "https://via.placeholder.com/50"
+                }
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full border border-gray-300"
+              />
+              <div>
+                <span className="font-bold text-gray-800">
+                  {comment.user?.name || "Unknown"}
+                </span>
+                <p className="text-gray-600">{comment.text}</p>
+              </div>
+            </div>
           ))
         ) : (
           <p>No comments yet</p>

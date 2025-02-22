@@ -14,14 +14,16 @@ import CreateBlog from "./pages/CreateBlog";
 import ManageBlogs from "./pages/ManageBlogs";
 import EditBlog from "./pages/EditBlog";
 import ExploreBlogs from "./pages/ExploreBlogs";
+import AdminDashboard from "./pages/AdminDashboard";
+import ManageUserBlogs from "./pages/ManageUserBlogs";
 
 function App() {
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
 
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
+        {/* ✅ Public Routes (Signup & Login) */}
         {!token ? (
           <>
             <Route path="/signup" element={<Signup />} />
@@ -31,37 +33,31 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         )}
 
-        {/* Private Routes - Only accessible when logged in */}
-        <Route
-          path="/"
-          element={token ? <Dashboard /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/dashboard"
-          element={token ? <Dashboard /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/profile"
-          element={token ? <Profile /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/create-blog"
-          element={token ? <CreateBlog /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/manage-blogs/:id"
-          element={token ? <ManageBlogs /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/edit-blog/:id"
-          element={token ? <EditBlog /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/explore"
-          element={token ? <ExploreBlogs /> : <Navigate to="/login" replace />}
-        />
+        {/* ✅ Admin Routes */}
+        {token && user?.isAdmin ? (
+          <>
+            <Route path="/" element={<Navigate to="/admin/dashboard" />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route
+              path="/admin/manage-user-blogs/:id"
+              element={<ManageUserBlogs />}
+            />
+            <Route path="/admin/profile" element={<Profile />} />
+          </>
+        ) : (
+          <>
+            {/* ✅ User Routes */}
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/create-blog" element={<CreateBlog />} />
+            <Route path="/manage-blogs/:id" element={<ManageBlogs />} />
+            <Route path="/edit-blog/:id" element={<EditBlog />} />
+            <Route path="/explore" element={<ExploreBlogs />} />
+          </>
+        )}
 
-        {/* Catch All Unknown Routes */}
+        {/* ✅ Catch All Unknown Routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
