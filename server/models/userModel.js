@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "http://localhost:5000/images/user.png",
     },
+    isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

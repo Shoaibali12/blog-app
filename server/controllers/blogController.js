@@ -33,9 +33,9 @@ const createBlog = asyncHandler(async (req, res) => {
 const getAllBlogs = asyncHandler(async (req, res) => {
   try {
     const blogs = await Blog.find()
-      .populate("user", "name email") // ✅ Populate blog owner
-      .populate("likes", "name email") // ✅ Populate users who liked the blog
-      .populate("comments.user", "name email") // ✅ Populate users who commented
+      .populate("user", "name email profilePicture")
+      .populate("likes", "name profilePicture")
+      .populate("comments.user", "name profilePicture")
       .sort({ createdAt: -1 });
 
     res.json(blogs);
