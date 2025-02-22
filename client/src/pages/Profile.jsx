@@ -1,16 +1,24 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { updateUser } from "../redux/authSlice";
 
 const Profile = () => {
-  const { user, token } = useSelector((state) => state.auth); // ✅ Get user data from Redux
+  const { user, token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+  const [profilePicture, setProfilePicture] = useState(
+    user?.profilePicture || ""
+  );
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // ✅ Initialize navigation
 
+  // ✅ Handle Profile Update (Name & Email)
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -22,9 +30,51 @@ const Profile = () => {
         { name, email },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      dispatch(updateUser({ ...user, name: data.name, email: data.email }));
       setMessage("Profile updated successfully!");
     } catch (error) {
       setMessage("Failed to update profile.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Handle Image Selection
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  // ✅ Upload Profile Picture
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setMessage("Please select an image first.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    try {
+      const { data } = await axios.put(
+        "http://localhost:5000/api/users/profile/upload",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setProfilePicture(data.profilePicture);
+      dispatch(updateUser({ ...user, profilePicture: data.profilePicture }));
+      setMessage("Profile picture updated successfully!");
+    } catch (error) {
+      setMessage("Failed to upload profile picture.");
     } finally {
       setLoading(false);
     }
@@ -45,7 +95,37 @@ const Profile = () => {
             {message}
           </p>
         )}
-        <form onSubmit={handleUpdate} className="space-y-4">
+
+        {/* ✅ Profile Picture Upload Section */}
+        <div className="flex flex-col items-center">
+          <img
+            src={profilePicture || "https://via.placeholder.com/150"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full shadow-md border-4 border-white"
+          />
+          <label className="mt-3 text-white cursor-pointer bg-gray-800 px-3 py-1 rounded-lg hover:bg-gray-700">
+            Choose Image
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={handleUpload}
+            className={`mt-2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-500 transition ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload Picture"}
+          </button>
+        </div>
+
+        {/* ✅ Profile Update Form */}
+        <form onSubmit={handleUpdate} className="space-y-4 mt-4">
           <input
             type="text"
             placeholder="Full Name"
@@ -62,7 +142,7 @@ const Profile = () => {
             disabled
           />
 
-          {/* ✅ Update Button */}
+          {/* ✅ Update Profile Button */}
           <button
             type="submit"
             className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
@@ -73,9 +153,9 @@ const Profile = () => {
             {loading ? "Updating..." : "Update Profile"}
           </button>
 
-          {/* ✅ Back Button (Now Styled to Look Professional) */}
+          {/* ✅ Back to Dashboard Button */}
           <button
-            type="button" // Prevents it from submitting the form
+            type="button"
             onClick={() => navigate("/dashboard")}
             className="w-full bg-gray-100 text-gray-800 font-bold py-3 rounded-lg shadow-md hover:bg-gray-200 transition duration-300 transform hover:scale-105"
           >
