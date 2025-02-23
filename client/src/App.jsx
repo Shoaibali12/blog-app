@@ -16,6 +16,8 @@ import EditBlog from "./pages/EditBlog";
 import ExploreBlogs from "./pages/ExploreBlogs";
 import AdminDashboard from "./pages/AdminDashboard";
 import ManageUserBlogs from "./pages/ManageUserBlogs";
+import Notification from "./components/Notification";
+import ViewPost from "./pages/ViewPost";
 
 function App() {
   const { token, user } = useSelector((state) => state.auth);
@@ -54,6 +56,8 @@ function App() {
             <Route path="/manage-blogs/:id" element={<ManageBlogs />} />
             <Route path="/edit-blog/:id" element={<EditBlog />} />
             <Route path="/explore" element={<ExploreBlogs />} />
+            <Route path="/notifications" element={<Notification />} />
+            <Route path="/post/:id" element={<ViewPost />} />
           </>
         )}
 

@@ -5,6 +5,8 @@ import { logout } from "../redux/authSlice";
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
+  const { notifications } = useSelector((state) => state.notifications);
+  const unreadCount = notifications.filter((notif) => !notif.isRead).length;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -73,6 +75,22 @@ const Sidebar = () => {
               👤 Profile
             </Link>
           </li>
+
+          {/* ✅ Notifications Button (Redirects to Notifications Page) */}
+          <li>
+            <Link
+              to="/notifications"
+              className="flex items-center gap-3 text-lg hover:bg-gray-700 px-4 py-2 rounded-lg transition relative w-full"
+            >
+              🔔 Notifications
+              {unreadCount > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
+          </li>
+          {/* Logout Button */}
           <li>
             <button
               onClick={handleLogout}
