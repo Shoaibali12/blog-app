@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Blog from "../models/blogModel.js";
+import Notification from "../models/Notification.js";
 
 const createBlog = asyncHandler(async (req, res) => {
   console.log("📩 Received request to create a blog");
@@ -69,7 +70,7 @@ const getBlogById = asyncHandler(async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate(
       "user",
-      "name email"
+      "name email profilePicture"
     );
 
     if (blog) {
@@ -137,7 +138,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
   }
 });
 
-// ✅ Like a Blog
+// ✅ Like a Blog with Notifications (Improved)
 const likeBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id).populate(
     "likes",
@@ -149,23 +150,57 @@ const likeBlog = asyncHandler(async (req, res) => {
     throw new Error("Blog not found");
   }
 
-  if (
-    blog.likes.some((like) => like._id.toString() === req.user._id.toString())
-  ) {
+  const isLiked = blog.likes.some(
+    (like) => like._id.toString() === req.user._id.toString()
+  );
+
+  if (isLiked) {
+    // ✅ Unlike the blog
     blog.likes = blog.likes.filter(
       (like) => like._id.toString() !== req.user._id.toString()
-    ); // Unlike
+    );
+
+    // ✅ Remove existing notification when unliking
+    await Notification.findOneAndDelete({
+      user: blog.user,
+      fromUser: req.user._id,
+      type: "like",
+      blogId: blog._id,
+    });
   } else {
-    blog.likes.push(req.user._id); // Like
+    // ✅ Like the blog
+    blog.likes.push(req.user._id);
+
+    // ✅ Check if a like notification already exists
+    const existingNotification = await Notification.findOne({
+      user: blog.user,
+      fromUser: req.user._id,
+      type: "like",
+      blogId: blog._id,
+    });
+
+    if (
+      !existingNotification &&
+      blog.user.toString() !== req.user._id.toString()
+    ) {
+      await Notification.create({
+        user: blog.user, // Post owner
+        fromUser: req.user._id, // Who liked
+        type: "like",
+        message: `Your blog "${blog.title}" was liked!`,
+        blogId: blog._id,
+        isRead: false,
+      });
+    }
   }
 
   await blog.save();
-  await blog.populate("likes", "name email"); // ✅ Populate again after saving
+  await blog.populate("likes", "name email");
 
   res.json({ likes: blog.likes });
 });
 
-// ✅ Comment on a Blog
+// ✅ Comment on a Blog with Notifications (Improved)
 const commentOnBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
@@ -177,8 +212,20 @@ const commentOnBlog = asyncHandler(async (req, res) => {
   const newComment = { user: req.user._id, text: req.body.comment };
   blog.comments.push(newComment);
 
+  // ✅ Add a notification only if the commenter is NOT the post owner
+  if (blog.user.toString() !== req.user._id.toString()) {
+    await Notification.create({
+      user: blog.user, // Post owner
+      fromUser: req.user._id, // Who commented
+      type: "comment",
+      message: `Someone commented on your blog "${blog.title}"!`,
+      blogId: blog._id,
+      isRead: false,
+    });
+  }
+
   await blog.save();
-  await blog.populate("comments.user", "name email"); // ✅ Populate user details for comments
+  await blog.populate("comments.user", "name email");
 
   res.json({ comments: blog.comments });
 });

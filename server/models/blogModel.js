@@ -16,7 +16,7 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
     image: {
-      type: String, // URL or file path for blog image
+      type: String,
       default: "",
     },
     likes: {
