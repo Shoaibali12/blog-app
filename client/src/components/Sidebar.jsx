@@ -20,7 +20,9 @@ const Sidebar = () => {
       className="w-64 bg-gray-800 text-white shadow-lg p-6 border-r border-gray-800 
                      fixed top-0 left-0 h-screen overflow-y-auto"
     >
-      <h2 className="text-2xl font-bold text-white mb-6">Blog Dashboard</h2>
+      <h2 className="text-2xl md:text-xl sm:text-lg font-bold text-white mb-6 ml-4 md:ml-8">
+        Blog Dashboard
+      </h2>
 
       {/* Profile Section */}
       <div className="flex items-center gap-4 mb-6">

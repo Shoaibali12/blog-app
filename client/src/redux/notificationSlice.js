@@ -16,7 +16,7 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
-// ✅ Mark Notification as Read (Persists in Backend)
+// ✅ Mark Notification as Read
 export const markNotificationAsRead = createAsyncThunk(
   "notifications/markAsRead",
   async (notificationId, { getState }) => {
@@ -26,7 +26,21 @@ export const markNotificationAsRead = createAsyncThunk(
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return notificationId; // Return ID to update state
+    return notificationId;
+  }
+);
+
+// ✅ Mark All Notifications as Read
+export const markAllNotificationsAsRead = createAsyncThunk(
+  "notifications/markAllAsRead",
+  async (_, { getState }) => {
+    const { token } = getState().auth;
+    await axios.put(
+      `http://localhost:5000/api/notifications/read-all`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return;
   }
 );
 
@@ -47,6 +61,12 @@ const notificationSlice = createSlice({
         state.notifications = state.notifications.map((notif) =>
           notif._id === action.payload ? { ...notif, isRead: true } : notif
         );
+      })
+      .addCase(markAllNotificationsAsRead.fulfilled, (state) => {
+        state.notifications = state.notifications.map((notif) => ({
+          ...notif,
+          isRead: true,
+        }));
       });
   },
 });

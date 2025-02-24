@@ -34,17 +34,23 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-6">
-      <div className="w-full max-w-lg bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-8 rounded-2xl border border-white border-opacity-30">
-        <h2 className="text-3xl font-extrabold text-white text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-6">
+      <div className="w-full max-w-lg bg-gray-800 bg-opacity-90 backdrop-blur-lg shadow-xl p-8 rounded-xl border border-gray-700">
+        <h2 className="text-3xl font-extrabold text-gray-100 text-center">
           📝 Create Blog
         </h2>
-        <p className="text-white text-center mb-6 opacity-80">
+        <p className="text-gray-400 text-center mb-6">
           Share your thoughts with the world!
         </p>
 
         {message && (
-          <p className="text-center text-white bg-gray-800 p-2 rounded-md">
+          <p
+            className={`text-center text-sm p-2 rounded-md ${
+              message.includes("✅")
+                ? "bg-red-500 text-white"
+                : "bg-green-500 text-white"
+            }`}
+          >
             {message}
           </p>
         )}
@@ -55,14 +61,14 @@ const CreateBlog = () => {
             placeholder="Blog Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
             required
           />
           <textarea
             placeholder="Blog Content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full px-4 py-3 h-40 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 h-40 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
             required
           />
           <input
@@ -70,24 +76,24 @@ const CreateBlog = () => {
             placeholder="Image URL (Optional)"
             value={image}
             onChange={(e) => setImage(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:ring-2 focus:ring-white outline-none transition duration-200"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
 
           <button
             type="submit"
-            className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            className={`w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition duration-300 transform hover:scale-105 hover:bg-blue-500 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={loading}
           >
-            {loading ? "Creating Blog..." : "Publish Blog"}
+            {loading ? "Publishing Blog..." : "Publish Blog"}
           </button>
 
           {/* 🔙 Back Button */}
           <button
             type="button"
             onClick={() => navigate("/dashboard")}
-            className="w-full bg-gray-100 text-gray-800 font-bold py-3 rounded-lg shadow-md hover:bg-gray-200 transition duration-300 transform hover:scale-105"
+            className="w-full bg-gray-700 text-gray-200 font-bold py-3 rounded-lg shadow-md hover:bg-gray-600 transition duration-300 transform hover:scale-105"
           >
             ← Back to Dashboard
           </button>
