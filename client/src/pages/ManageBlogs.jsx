@@ -11,7 +11,7 @@ const ManageBlogs = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   useEffect(() => {
     const fetchUserBlogs = async () => {
       try {
@@ -57,16 +57,44 @@ const ManageBlogs = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-900 text-white">
-      {/* ✅ Sidebar */}
-      <Sidebar user={user} handleLogout={() => navigate("/login")} />
+    <div className="min-h-screen flex bg-gray-900 text-white relative">
+      {/* ✅ Sidebar - Responsive */}
+      <div
+        className={`fixed inset-y-0 left-0 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 transition-transform duration-300 ease-in-out bg-gray-800 w-64 md:relative md:flex z-50`}
+      >
+        <Sidebar user={user} handleLogout={() => navigate("/login")} />
+      </div>
 
-      {/* Manage Blogs Content */}
-      <main className="ml-64 flex-1 p-6">
-        <h1 className="text-3xl font-bold">📝 Manage Your Blogs</h1>
-        <p className="text-gray-300">Edit or delete your blogs here</p>
+      {/* ✅ Overlay Effect on Mobile when Sidebar is Open */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 md:hidden z-40"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
-        <div className="mt-6 flex justify-end">
+      {/* ✅ Main Content (Adjust Width When Sidebar is Open) */}
+      <main
+        className={`p-6 transition-all flex flex-col w-full ${
+          sidebarOpen ? "md:ml-64" : ""
+        }`}
+      >
+        {/* ✅ Toggle Button for Mobile */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden absolute top-5 left-2 p-2 rounded-md text-white z-50"
+        >
+          {sidebarOpen ? "✖" : "☰"}
+        </button>
+
+        {/* ✅ Heading with Top Margin to Push it Down */}
+        <h1 className="text-3xl md:text-lg sm:text-base font-bold ml-12 md:ml-6 mt-12 md:mt-6">
+          Manage Blogs
+        </h1>
+
+        <div className="mt-6 flex justify-center">
           <Link
             to="/create-blog"
             className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600 transition"
@@ -78,14 +106,14 @@ const ManageBlogs = () => {
         {/* Error Message */}
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
-        {/* User's Blogs */}
+        {/* ✅ User's Blogs Section */}
         <div className="mt-8">
           {blogs.length === 0 ? (
             <p className="text-gray-300 mt-4 text-center">
               You have not created any blogs yet.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 lg:ml-12">
               {blogs.map((blog) => (
                 <div
                   key={blog._id}

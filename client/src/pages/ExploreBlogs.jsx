@@ -15,6 +15,7 @@ const ExploreBlogs = () => {
   const [likesModalOpen, setLikesModalOpen] = useState(false);
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
   const [newComments, setNewComments] = useState({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -95,20 +96,48 @@ const ExploreBlogs = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-900 text-white">
-      {/* ✅ Sidebar */}
-      <Sidebar />
+    <div className="min-h-screen flex bg-gray-900 text-white relative">
+      {/* ✅ Sidebar - Responsive */}
+      <div
+        className={`fixed inset-y-0 left-0 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 transition-transform duration-300 ease-in-out bg-gray-800 w-64 md:relative md:flex z-50`}
+      >
+        <Sidebar />
+      </div>
+      {/* ✅ Overlay Effect on Mobile when Sidebar is Open */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 md:hidden z-40"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
-      {/* Explore Blogs Content */}
-      <main className="ml-64 flex-1 p-6">
-        <h1 className="text-3xl font-bold text-center">🌍 Explore Blogs</h1>
+      {/* ✅ Main Content (Dynamic width based on Sidebar State) */}
+      <main
+        className={`p-4 transition-all flex flex-col items-center w-full ${
+          sidebarOpen ? "md:ml-64" : ""
+        }`}
+      >
+        {/* ✅ Toggle Button for Mobile */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden absolute top-5 left-2  p-2 rounded-md text-white z-50"
+        >
+          {sidebarOpen ? "✖" : "☰ "}
+        </button>
+
+        <h1 className="text-3xl md:text-2xl sm:text-xl font-bold text-center">
+          🌍 Explore Blogs
+        </h1>
         <p className="opacity-80 text-center text-gray-300">
           See what others are posting!
         </p>
 
         {error && <p className="text-red-400 text-center mt-4">{error}</p>}
 
-        <div className="flex flex-col items-center gap-8 mt-6">
+        {/* ✅ Blog List */}
+        <div className="flex flex-col items-center gap-8 mt-6 w-full">
           {blogs.length > 0 ? (
             blogs.map((blog) => {
               const isLiked = blog.likes?.some(

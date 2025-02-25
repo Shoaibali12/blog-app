@@ -81,12 +81,12 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
-      <div className="w-full max-w-md bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-8 rounded-2xl border border-white border-opacity-30">
-        <h2 className="text-3xl font-extrabold text-white text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 px-4">
+      <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white bg-opacity-20 backdrop-blur-lg shadow-lg p-6 sm:p-8 rounded-2xl border border-white border-opacity-30">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center">
           👤 Profile
         </h2>
-        <p className="text-white text-center mb-6 opacity-80">
+        <p className="text-white text-center mb-4 sm:mb-6 opacity-80">
           Update your profile information
         </p>
 
@@ -101,9 +101,9 @@ const Profile = () => {
           <img
             src={profilePicture || "https://via.placeholder.com/150"}
             alt="Profile"
-            className="w-24 h-24 rounded-full shadow-md border-4 border-white"
+            className="w-20 sm:w-24 h-20 sm:h-24 rounded-full shadow-md border-4 border-white"
           />
-          <label className="mt-3 text-white cursor-pointer bg-gray-800 px-3 py-1 rounded-lg hover:bg-gray-700">
+          <label className="mt-3 text-white cursor-pointer bg-gray-800 px-3 py-1 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-700">
             Choose Image
             <input
               type="file"
@@ -115,7 +115,7 @@ const Profile = () => {
           <button
             type="button"
             onClick={handleUpload}
-            className={`mt-2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-500 transition ${
+            className={`mt-2 bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:bg-green-500 transition ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={loading}
@@ -125,7 +125,7 @@ const Profile = () => {
         </div>
 
         {/* ✅ Profile Update Form */}
-        <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+        <form onSubmit={handleUpdate} className="space-y-4 sm:space-y-6 mt-4">
           <input
             type="text"
             placeholder="Full Name"

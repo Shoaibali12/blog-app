@@ -101,13 +101,13 @@ const Dashboard = () => {
         {/* ✅ Toggle Button for Mobile */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden absolute top-5.5 left-2  p-2 rounded-md text-white z-50"
+          className="md:hidden absolute top-5 left-2  p-2 rounded-md text-white z-50"
         >
           {sidebarOpen ? "✖" : "☰"}
         </button>
 
-        <h1 className="text-left w-10/12 text-3xl md:text-2xl sm:text-lg font-bold">
-          Welcome, {user?.name || "User"}
+        <h1 className="text-3xl md:text-lg sm:text-base font-bold ml-8 md:ml-6 mt-12 md:mt-6">
+          Hi, {user?.name || "User"}
         </h1>
 
         {/* ✅ Create Blog Button */}
